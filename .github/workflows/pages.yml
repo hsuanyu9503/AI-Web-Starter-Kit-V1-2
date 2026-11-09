@@ -1,0 +1,52 @@
+name: Pages - 合併 main 後自動部署
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 已發布版本需要重新部署時，允許手動啟動
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main commit
+        uses: actions/checkout@v6
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 檢查結構
+        run: npm run check
+      - name: 測試
+        run: npm test
+      - name: 建置
+        run: npm run build
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy approved main commit
+        id: deployment
+        uses: actions/deploy-pages@v4

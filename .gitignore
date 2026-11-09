@@ -1,0 +1,34 @@
+# 建置與交付產物
+dist/
+release/
+*.zip
+
+# 編輯器與作業系統
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 環境機密 / 使用者資料
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+private/
+backups/
+*.sqlite
+*.sqlite3
+*.db
+
+# PR 差異審查輸出（分享前需人工檢查）
+.review-packets/
+
+# 開發快取
+node_modules/
+coverage/
+__pycache__/
+.pytest_cache/

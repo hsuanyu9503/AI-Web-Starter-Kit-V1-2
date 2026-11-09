@@ -1,0 +1,77 @@
+name: Release - 核准後建立 Tag + ZIP + GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '例如 v1.2.0；請先完成 docs/ 的正式驗收與核准'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: approved-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 僅正式發布工作需要建立 Tag / Release
+    steps:
+      - name: Checkout approved main commit
+        uses: actions/checkout@v6
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check / test / build
+        run: |
+          npm run check
+          npm test
+          npm run build
+      - name: Pack approved release with commit metadata
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          python3 scripts/package_release.py --version "$RELEASE_VERSION" --output release
+      - name: Verify release and prepare detached SHA-256
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release/*-RELEASE.zip)
+          test "${#files[@]}" -eq 1
+          python3 scripts/verify_release.py "${files[0]}" --expected-version "$RELEASE_VERSION" --expected-commit "$GITHUB_SHA"
+          (cd release && sha256sum ./*-RELEASE.zip > ZIP-SHA256SUMS.txt)
+      - name: Ensure this version was never published
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_VERSION" >/dev/null 2>&1; then
+            echo "Tag already exists; refusing overwrite: $RELEASE_VERSION" >&2
+            exit 1
+          fi
+          if gh release view "$RELEASE_VERSION" >/dev/null 2>&1; then
+            echo "Release already exists; refusing overwrite: $RELEASE_VERSION" >&2
+            exit 1
+          fi
+      - name: Create Tag and GitHub Release, upload ZIP + SHA-256
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release/*-RELEASE.zip)
+          test "${#files[@]}" -eq 1
+          gh release create "$RELEASE_VERSION" "${files[0]}" release/ZIP-SHA256SUMS.txt \
+            --target "$GITHUB_SHA" \
+            --title "$RELEASE_VERSION" \
+            --notes-file docs/RELEASE_NOTES.md

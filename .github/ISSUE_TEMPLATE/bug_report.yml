@@ -1,0 +1,28 @@
+name: 錯誤回報 / Bug
+description: 用可重現步驟回報網站問題
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 版本／Commit
+      placeholder: v1.2.3 / SHA
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟
+      description: 依序描述操作，必要時附去識別化截圖。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果與實際結果
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影響範圍及是否涉及正式資料

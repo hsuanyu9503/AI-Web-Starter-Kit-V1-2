@@ -1,0 +1,26 @@
+name: CI - 檢查與建置
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 檢查結構與敏感內容
+        run: npm run check
+      - name: 執行測試
+        run: npm test
+      - name: 建置靜態網站
+        run: npm run build

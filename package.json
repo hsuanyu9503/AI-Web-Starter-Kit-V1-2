@@ -1,0 +1,15 @@
+{
+  "name": "ai-web-development-starter-kit",
+  "private": true,
+  "version": "1.2.0",
+  "description": "ChatGPT × Claude × GitHub + ZIP web project starter",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "review:packet": "python3 scripts/export_review_packet.py"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

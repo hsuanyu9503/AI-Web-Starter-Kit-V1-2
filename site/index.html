@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AI Web Development Starter Kit 示範網站。" />
+    <title>AI Web Starter｜專案起點</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要內容</a>
+    <header class="topbar">
+      <div class="container brand-row">
+        <div class="brand-mark" aria-hidden="true">W</div>
+        <div>
+          <p class="brand-name">AI WEB STARTER</p>
+          <p class="brand-tag">GitHub + ZIP · ChatGPT × Claude</p>
+        </div>
+        <span class="demo-pill">示範網站</span>
+      </div>
+    </header>
+    <main id="main" class="container">
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="eyebrow">你的下一個網站，從這裡開始</p>
+        <h1 id="hero-title">清楚規劃、穩定開發，<br /><span>讓每一次升級都有依據。</span></h1>
+        <p class="lead">這是可自由修改的起始畫面。真正的合作規格放在 docs，程式由 Claude 實作，視覺由 ChatGPT 與你共同定義。</p>
+        <div class="hero-actions">
+          <button type="button" class="primary-button" id="demo-toggle" aria-expanded="false" aria-controls="demo-note">展示簡單互動 <span aria-hidden="true">↗</span></button>
+          <a class="secondary-link" href="#workflow">查看流程 <span aria-hidden="true">↓</span></a>
+        </div>
+        <p id="demo-note" class="demo-note" hidden role="status">按鈕可以正常運作。下一步可以把這個示範換成你的專屬功能。</p>
+      </section>
+      <section class="section" id="workflow" aria-labelledby="workflow-title">
+        <div class="section-head">
+          <p class="eyebrow">THREE ROLES, ONE PROJECT</p>
+          <h2 id="workflow-title">三種角色，一個共同版本</h2>
+          <p>用清楚的交接與驗收，讓設計與工程可以各自發揮。</p>
+        </div>
+        <div class="card-grid">
+          <article class="role-card">
+            <span class="number">01 / DECISION</span>
+            <h3>你 · 決策與驗收</h3>
+            <p>決定真正需要的功能，確認操作是否符合需求，掌握正式發布。</p>
+          </article>
+          <article class="role-card">
+            <span class="number">02 / DESIGN</span>
+            <h3>ChatGPT · 規劃與視覺</h3>
+            <p>討論需求、規劃流程、設計版面與製作美術素材，協助審查成果。</p>
+          </article>
+          <article class="role-card">
+            <span class="number">03 / ENGINEERING</span>
+            <h3>Claude · 實作與整合</h3>
+            <p>編寫程式、測試、整合圖片與動畫，透過 Pull Request 保護穩定版。</p>
+          </article>
+        </div>
+      </section>
+      <section class="note-panel" aria-label="使用說明">
+        <div>
+          <p class="eyebrow">NEXT STEP</p>
+          <h2>這是一個起點，不是完成版。</h2>
+          <p>請先填寫 docs/SPEC.md 和 docs/DESIGN.md，確認方向後再交給 Claude 開發。</p>
+        </div>
+        <span class="note-symbol" aria-hidden="true">✦</span>
+      </section>
+    </main>
+    <footer class="footer"><div class="container">AI Web Development Starter Kit · 靜態示範 · 未連接資料庫</div></footer>
+  </body>
+</html>

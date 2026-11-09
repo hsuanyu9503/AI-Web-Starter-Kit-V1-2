@@ -1,0 +1,29 @@
+name: 功能需求 / Feature
+description: 以規格與驗收標準提出功能新增或升級
+labels: [enhancement]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: 目標與使用情境
+      description: 誰在什麼情境下需要什麼功能？
+    validations:
+      required: true
+  - type: textarea
+    id: requirements
+    attributes:
+      label: 已確認需求與操作流程
+      description: 請依 SPEC.md 描述；未確認內容另列。
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: 不修改範圍／不可更動條件
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收標準
+      description: 列出可實際測試的通過條件。
+    validations:
+      required: true
