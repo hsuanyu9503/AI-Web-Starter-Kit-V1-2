@@ -19,4 +19,4 @@
 - 若正式環境使用既有 Actions，先保留；本範本 `pages.yml` 是合併 main 後**自動部署**，請先在新環境驗證再取代舊部署流程，避免兩套 Actions 同時發布。
 - 對外宣稱完成之前，仍須由你確認實機驗收。
 
-> V1.1 的 `release.yml` 需要現有專案採用對應 `scripts/package_release.py` 與 `dist/` 結構；導入既有網站時，先請 Claude 依照目前技術棧調整建置與打包。
+> 本範本（V1.2，發布流程沿用 V1.1）的 `release.yml` 需要現有專案採用對應 `scripts/package_release.py` 與 `dist/` 結構；導入既有網站時，先請 Claude 依照目前技術棧調整建置與打包。

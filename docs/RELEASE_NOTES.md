@@ -21,4 +21,4 @@
 
 請確認正式發布前已將本範本改為真實內容，並核對 `docs/TEST_REPORT.md`；`VERSION.json` 的 Git SHA 才是 ZIP 的技術版本依據。
 
-> V1.1：正式 Release 不會因 main 自動部署而自動建立。需先完成驗收、核准並合併 main，再人工啟動 GitHub Actions `release.yml`。
+> V1.2（沿用 V1.1 發布行為）：正式 Release 不會因 main 自動部署而自動建立。需先完成驗收、核准並合併 main，再人工啟動 GitHub Actions `release.yml`。
