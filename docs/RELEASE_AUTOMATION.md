@@ -28,7 +28,9 @@ CI 自動測試（validate）
    ↓
 Claude 匯出固定 Head SHA 的審查證據包 → ChatGPT 獨立差異審查（REV-001…）
    ↓
-Claude 逐項回覆／修正 → 新 Commit 重跑測試 → ChatGPT 針對新 Head SHA 複驗
+審查無問題 → 只記錄結果，不需要額外修改或新增 Commit
+有問題 → Claude 逐項回覆並修正 → 新 Commit 重跑測試 → ChatGPT 針對新 Head SHA 複驗
+（若為記錄審查結果另行提交 Commit，也要檢查新增差異與最新 CI）
    ↓
 你和 ChatGPT 看畫面／截圖驗收；審查結果記入 REVIEW_LOG
    ↓
@@ -44,7 +46,7 @@ Pages 自動建置、部署；至 Actions 確認成功及實際網站
 ## 重要版 Tag + Release + ZIP
 
 1. 在正式版所在 `main` 上，完成 `docs/RELEASE_NOTES.md`、`docs/TEST_REPORT.md`、`docs/ACCEPTANCE.md`：包含已執行測試的證據、驗收結果、核准者。
-2. **必須先把上述文件以 PR 合併至 main**，同一個 main Commit 必須包含已核准文件及要發布的程式碼。不可只在聊天中口頭核准。該 PR 與一般 PR 相同，需依風險等級完成 ChatGPT 差異審查及 Claude 回覆，且審查對應的 Head SHA 必須是最終合併的版本。
+2. **必須先把上述文件以 PR 合併至 main**，同一個 main Commit 必須包含已核准文件及要發布的程式碼。不可只在聊天中口頭核准。該 PR 與一般 PR 相同，需依風險等級完成 ChatGPT 差異審查及 Claude 回覆。審查紀錄對應**合併前最新的 PR Head SHA**；審查後若再新增修改，需重新檢查受影響差異與 CI。合併後另行記錄 main Commit SHA 及其對應的 PR；不要求 PR Head SHA 與合併產生的 main Commit SHA 相同。
 3. 由你在 Actions → **Release - 核准後建立 Tag + ZIP + GitHub Release** → Run workflow → 選 `main` → 填 `v1.2.0`。工作會再次測試。
 4. 若版本已存在、驗收文件未完成、SHA 不符或 Git 工作樹不乾淨，流程必須失敗；不覆蓋舊 Tag 或舊 Release。
 5. 自動產生 Tag 和 Release，附件包含 `*-RELEASE.zip` 與 `ZIP-SHA256SUMS.txt`；內部 ZIP 另有 `VERSION.json`／`SHA256SUMS.txt`。
