@@ -1,8 +1,9 @@
-# GitHub 自動化與正式發布制度｜Starter Kit V1.1
+# GitHub 自動化與正式發布制度｜Starter Kit V1.2
 
-## 目的：讓 Claude Code 做事、讓 GitHub 執行、讓你決策
+## 目的：讓 Claude Code 做事、讓 GitHub 執行、ChatGPT 獨立審查、讓你決策
 
-- **Claude Code**：在授權的本機或雲端環境讀取 repository、修改程式、建立 `feature/*`／`hotfix/*` 分支、推送並建立 Pull Request。Claude 的操作權限由你在 Claude 與 GitHub 端設定；本範本不會替你連接帳號。
+- **Claude Code**：在授權的本機或雲端環境讀取 repository、修改程式、建立開發分支、推送並建立 Pull Request。分支命名：Claude Code 雲端工作分支 `claude/*`、一般人工功能分支 `feature/*`、緊急修復 `hotfix/*`。Claude 的操作權限由你在 Claude 與 GitHub 端設定；本範本不會替你連接帳號。
+- **ChatGPT 獨立差異審查**（V1.2）：依 `docs/RISK_POLICY.md` 分級，ChatGPT 依 `docs/CODE_REVIEW.md` 審查固定 Head SHA 的實際程式差異（可用 `scripts/export_review_packet.py` 匯出）；Claude 依 `templates/CLAUDE_REVIEW_RESPONSE.md` 逐項回覆與修正。這是**人工流程關卡**，GitHub Actions 不會自動檢查或強制，也不等於 GitHub 的正式 Approve。
 - **GitHub CI**（`.github/workflows/ci.yml`）：每次 PR 與 main 更新，跑 check、test、build。通過不等於完成人工驗收。
 - **GitHub Pages**（`pages.yml`）：**PR 合併至 main 後自動觸發**；同一條工作流程重新做 check/test/build，成功才部署。也支援手動重新部署，僅限 `main`。
 - **重要版發行**（`release.yml`）：由你確認文件、核准後，在 Actions 的 Release 工作流程手動輸入版本號；它會自動打包 ZIP、校驗 SHA、建立新 Tag 和 GitHub Release，並將 ZIP 與雜湊檔附上。**不會對每次 push 自動產生 Release**。
@@ -21,9 +22,15 @@
 ```text
 ChatGPT 產出 SPEC / DESIGN + 交接單
    ↓
-Claude Code 建立 feature/* → commit → push → PR
+Claude Code 建立 claude/*（或 feature/*、hotfix/*）→ commit → push → PR（附 L1／L2／L3 初評、Base／Head SHA）
    ↓
-CI 自動測試；必要時你和 ChatGPT 看畫面／截圖驗收
+CI 自動測試（validate）
+   ↓
+Claude 匯出固定 Head SHA 的審查證據包 → ChatGPT 獨立差異審查（REV-001…）
+   ↓
+Claude 逐項回覆／修正 → 新 Commit 重跑測試 → ChatGPT 針對新 Head SHA 複驗
+   ↓
+你和 ChatGPT 看畫面／截圖驗收；審查結果記入 REVIEW_LOG
    ↓
 你在 PR 確認通過（必要時更新 ACCEPTANCE）
    ↓
@@ -37,7 +44,7 @@ Pages 自動建置、部署；至 Actions 確認成功及實際網站
 ## 重要版 Tag + Release + ZIP
 
 1. 在正式版所在 `main` 上，完成 `docs/RELEASE_NOTES.md`、`docs/TEST_REPORT.md`、`docs/ACCEPTANCE.md`：包含已執行測試的證據、驗收結果、核准者。
-2. **必須先把上述文件以 PR 合併至 main**，同一個 main Commit 必須包含已核准文件及要發布的程式碼。不可只在聊天中口頭核准。
+2. **必須先把上述文件以 PR 合併至 main**，同一個 main Commit 必須包含已核准文件及要發布的程式碼。不可只在聊天中口頭核准。該 PR 與一般 PR 相同，需依風險等級完成 ChatGPT 差異審查及 Claude 回覆，且審查對應的 Head SHA 必須是最終合併的版本。
 3. 由你在 Actions → **Release - 核准後建立 Tag + ZIP + GitHub Release** → Run workflow → 選 `main` → 填 `v1.2.0`。工作會再次測試。
 4. 若版本已存在、驗收文件未完成、SHA 不符或 Git 工作樹不乾淨，流程必須失敗；不覆蓋舊 Tag 或舊 Release。
 5. 自動產生 Tag 和 Release，附件包含 `*-RELEASE.zip` 與 `ZIP-SHA256SUMS.txt`；內部 ZIP 另有 `VERSION.json`／`SHA256SUMS.txt`。
@@ -54,6 +61,7 @@ Pages 自動建置、部署；至 Actions 確認成功及實際網站
 ## 失敗時
 
 - **CI 失敗**：禁止合併，Claude 在原分支修復並重新提交。
+- **審查發現 BLOCKER／HIGH**：禁止合併；Claude 在原分支修正、重跑測試，並由 ChatGPT 針對新 Head SHA 複驗。
 - **Pages 失敗**：先在 Actions 讀取錯誤；不要用新的未驗收功能「順便修」。若必要以 `hotfix/*` 修復。
 - **Release 失敗**：保留現場紀錄，確認是否建立 Tag 或 Release，再檢查原因；**不要直接重跑同版本造成重複或覆蓋**。
 - **需要回退**：由 main 建立回復 PR（或核准 hotfix），部署新提交。Tag 不會把 GitHub Pages 自動倒轉；若牽涉 Supabase，需另行檢查資料庫相容性及備份。
